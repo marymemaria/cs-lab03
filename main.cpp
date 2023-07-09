@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <algorithm>
 using namespace std;
 
 const size_t SCREEN_WIDTH = 80;
@@ -48,27 +49,6 @@ vector<size_t> make_histogram(const vector<double>& numbers, size_t& bin_count) 
     return bins;
 }
 
-void show_histogram_text(const vector<size_t>& bins) {
-    size_t max_count = bins[0], h, max_height = 0;
-    for (int i = 0; i < bins.size(); i++) {
-        if (bins[i] > max_count)
-            max_count = bins[i];
-        h = MAX_ASTERISK * (static_cast<double>(bins[i]) / max_count);
-        if (h > max_height)
-            max_height = h;
-    }
-    for (int i = 0; i < max_height; i++) {
-        for (int j = 0; j < bins.size(); j++) {
-            size_t height = MAX_ASTERISK * (static_cast<double>(bins[j]) / max_count);
-            if (height > i)
-                cout << "*";
-            else
-                cout << " ";
-        }
-        cout << endl;
-    }
-}
-
 void svg_begin(double width, double height) {
     cout << "<?xml version='1.0' encoding='UTF-8'?>\n";
     cout << "<svg ";
@@ -98,13 +78,13 @@ void show_histogram_svg(const vector<size_t>& bins) {
     const auto TEXT_BASELINE = 20;
     const auto TEXT_WIDTH = 50;
     const auto BIN_HEIGHT = 30;
-    const auto BLOCK_WIDTH = 10;
+    const auto MAX_BIN = *max_element(bins.begin(), bins.end());
     svg_begin(IMAGE_WIDTH, IMAGE_HEIGHT);
     svg_text(TEXT_LEFT, TEXT_BASELINE, to_string(bins[0]));
-    svg_rect(TEXT_WIDTH, 0, bins[0] * BLOCK_WIDTH, BIN_HEIGHT, "#FFFAF0", "#FFD700");
+    svg_rect(TEXT_WIDTH, 0, MAX_ASTERISK * (static_cast<double>(bins[0])) / MAX_BIN, BIN_HEIGHT, "#FFFAF0", "#FFD700");
     double top = 0;
     for (size_t bin : bins) {
-        const double bin_width = BLOCK_WIDTH * bin;
+        const double bin_width = MAX_ASTERISK * (static_cast<double>(bin)) / MAX_BIN;
         svg_text(TEXT_LEFT, top + TEXT_BASELINE, to_string(bin));
         svg_rect(TEXT_WIDTH, top, bin_width, BIN_HEIGHT, "#FFFAF0", "#FFD700");
         top += BIN_HEIGHT;
