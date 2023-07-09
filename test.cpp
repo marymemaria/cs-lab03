@@ -1,4 +1,5 @@
 #include "histogram.h"
+#include "svg.h"
 #include <cassert>
 
 void test_positive() {
@@ -41,10 +42,22 @@ void test_empty() {
 	assert(max == 0);
 }
 
+void test_svg1() {
+	const double text_width = 20;
+	assert(calc_image_height(text_width) > 0);
+};
+
+void test_svg2() {
+	const double text_width = -100;
+	assert(calc_image_height(text_width) < 0);
+};
+
 int main() {
 	test_positive();
 	test_negative();
 	test_different();
 	test_one();
 	test_empty();
+	test_svg1();
+	test_svg2;
 }

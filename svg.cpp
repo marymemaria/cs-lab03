@@ -22,23 +22,28 @@ void svg_rect(double x, double y, double width, double height, string stroke = "
         << "' stroke = '" << stroke << "' fill = '" << fill << "'/>";
 };
 
+double calc_image_height(const double text_width) {
+    double image_height = MAX_ASTERISK + text_width;
+    return image_height;
+};
+
 void show_histogram_svg(const vector<size_t>& bins) {
-    const auto IMAGE_WIDTH = 400;
-    const auto IMAGE_HEIGHT = 300;
-    const auto TEXT_LEFT = 20;
+    const auto TEXT_LEFT = 10;
     const auto TEXT_BASELINE = 20;
-    const auto TEXT_WIDTH = 50;
-    const auto BIN_HEIGHT = 30;
+    const auto TEXT_WIDTH = 30;
+    const auto BIN_WIDTH = 30;
+    const auto IMAGE_WIDTH = 400;
+    const auto IMAGE_HEIGHT = calc_image_height(TEXT_WIDTH);
     const auto MAX_BIN = *max_element(bins.begin(), bins.end());
     svg_begin(IMAGE_WIDTH, IMAGE_HEIGHT);
     svg_text(TEXT_LEFT, TEXT_BASELINE, to_string(bins[0]));
-    svg_rect(TEXT_WIDTH, 0, MAX_ASTERISK * (static_cast<double>(bins[0])) / MAX_BIN, BIN_HEIGHT, "#FFFAF0", "#FFD700");
+    svg_rect(0, TEXT_WIDTH, BIN_WIDTH, MAX_ASTERISK * (static_cast<double>(bins[0])) / MAX_BIN, "#FFFAF0", "#FFD700");
     double top = 0;
     for (size_t bin : bins) {
-        const double bin_width = MAX_ASTERISK * (static_cast<double>(bin)) / MAX_BIN;
-        svg_text(TEXT_LEFT, top + TEXT_BASELINE, to_string(bin));
-        svg_rect(TEXT_WIDTH, top, bin_width, BIN_HEIGHT, "#FFFAF0", "#FFD700");
-        top += BIN_HEIGHT;
+        const double bin_height = MAX_ASTERISK * (static_cast<double>(bin)) / MAX_BIN;
+        svg_text(top + TEXT_LEFT, TEXT_BASELINE, to_string(bin));
+        svg_rect(top, TEXT_WIDTH, BIN_WIDTH, bin_height, "#FFFAF0", "#FFD700");
+        top += BIN_WIDTH;
     }
     svg_end();
 }
